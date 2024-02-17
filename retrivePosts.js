@@ -10,7 +10,7 @@ const mongoURI = process.env.MONGO_URI;
 const awardPoints = (action) => {
   switch (action) {
     case 'post':
-      return 100;
+      return 69;
     case 'like':
       return 10;
     case 'recast':
