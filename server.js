@@ -23,7 +23,7 @@ app.get('/leaderboard', async (req, res) => {
         const usersCollection = database.collection('users');
 
         // Example: Get top 10 users based on points (you can modify this query based on your needs)
-        const leaderboardData = await usersCollection.find().sort({ points: -1 }).limit(10).toArray();
+        const leaderboardData = await usersCollection.find().sort({ points: -1 }).limit(100).toArray();
 
         res.json(leaderboardData);
     } catch (error) {
