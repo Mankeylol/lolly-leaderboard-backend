@@ -4,11 +4,13 @@ dotenv.config();
 const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
+const bodyParser = require('body-parser')
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(bodyParser.json())
 
 const mongoURI = process.env.MONGO_URI;
 
