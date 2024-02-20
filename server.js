@@ -7,7 +7,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser')
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(bodyParser.json())
@@ -42,7 +42,7 @@ app.post('/getUserDetails', async (req, res) => {
         const database = client.db('Lollypop');
         const usersCollection = database.collection('users');
 
-        const user = await usersCollection.findOne({ authorId: fid });
+        const user = await usersCollection.findOne({ fid: fid });
 
         if (user) {
             res.json({
