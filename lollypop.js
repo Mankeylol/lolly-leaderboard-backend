@@ -136,24 +136,49 @@ function processUsers() {
 }
 
 async function uploadToMongoDB() {
-    try {
-      const client = new MongoClient(mongoURI);
-      await client.connect();
-  
-      const db = client.db('Lollypop');
-      const collection = db.collection('users');
-  
-      // Insert uniqueUsers array into MongoDB
-      await collection.insertMany(uniqueUsers);
-  
-      console.log('Data uploaded to MongoDB successfully.');
-  
-      // Close the connection
-      await client.close();
-    } catch (error) {
-      console.log(error);
+  try {
+    const client = new MongoClient(mongoURI);
+    await client.connect();
+
+    const db = client.db('Lollypop');
+    const collection = db.collection('users');
+
+    for (const user of uniqueUsers) {
+      const filter = { fid: user.fid };
+
+      const update = {
+        $set: {
+          username: user.username,
+        },
+        $inc: {
+          points: user.points,
+        },
+        $addToSet: {
+          casts: { $each: user.casts },
+        },
+        // Add other fields to update as needed
+      };
+
+      const options = { upsert: true };
+
+      const result = await collection.updateOne(filter, update, options);
+
+      if (result.upsertedCount === 1) {
+        console.log(`User with fid ${user.fid} created.`);
+      } else {
+        console.log(`User with fid ${user.fid} updated.`);
+      }
     }
+
+    console.log('Data uploaded to MongoDB successfully.');
+
+    // Close the connection
+    await client.close();
+  } catch (error) {
+    console.log(error);
   }
+}
+
   
 
 // Main execution
