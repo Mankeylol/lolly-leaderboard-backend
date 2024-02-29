@@ -5,6 +5,7 @@ const express = require('express')
 const { MongoClient } = require('mongodb')
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const mongoConnect = require('./retrivePoints');
 
 const app = express()
 const port = process.env.PORT || 3001
@@ -69,6 +70,38 @@ app.post('/getUserDetails', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' })
   }
 })
+
+app.post('/getPoints', async (req, res) => {
+  try {
+    const { fid } = req.body;
+    console.log(fid);
+    console.log(typeof fid)
+
+    const client = new MongoClient(mongoURI);
+    await client.connect();
+    console.log('MongoDB connected');
+
+    const db = client.db('Lollypop');
+    const collection = db.collection('users');
+
+    const result = await collection.findOne({ fid: Number(fid) });
+
+    if (result) {
+      const points = result.points;
+      console.log(result);
+      res.json(points);
+    } else {
+      console.log('Document not found');
+      res.status(404).json({ error: 'Document not found' });
+    }
+
+    await client.close();
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
